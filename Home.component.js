@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import CameraComponent from './Camera.component'
 import APIUtils from './Services/EmotionAPI.service'
-import axios from 'axios'
 
 export default class HomeComponent extends Component {
   static navigationOptions = {
