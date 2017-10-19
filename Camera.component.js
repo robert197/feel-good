@@ -27,7 +27,6 @@ export default class CameraComponent extends Component{
           .then((data) => {
              console.log(data)
              let path = data.path
-    
           })
           .catch(err => console.error(err));
       }
