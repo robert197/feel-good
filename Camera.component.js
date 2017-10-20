@@ -2,11 +2,13 @@
 import React, {Component} from 'react'
 import {Text, StyleSheet} from 'react-native'
 import Camera from 'react-native-camera'
+import RNFS from 'react-native-fs'
 
 export default class CameraComponent extends Component{
     static navigationOptions = {
       title: 'Camera'
     }
+
     render() {
         return (
             <Camera
@@ -22,14 +24,17 @@ export default class CameraComponent extends Component{
 
     takePicture() {
         const options = {};
-        //options.location = ...
         this.camera.capture({metadata: options})
-          .then((data) => {
-             console.log(data)
-             let path = data.path
-          })
-          .catch(err => console.error(err));
-      }
+        .then(data => this._getBlobFromImagePath(data.path))
+        .then()
+        .catch(err => console.error(err))
+    }
+
+    _getBlobFromImagePath(path) {
+      return RNFS.readFile(path, 'base64')
+        .then(file => file)
+        .catch(error => console.log(error))
+    }
 }
 
 const styles = StyleSheet.create({

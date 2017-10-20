@@ -6,8 +6,8 @@ import {
   AppRegistry,
 } from 'react-native'
 
-import HomeComponent from './Home.component'
-import CameraComponent from './Camera.component'
+import HomeComponent from './app/containers/Home/Home'
+import CameraComponent from './app/containers/Camera/Camera'
 
 const Navigator = StackNavigator({
   Home: { screen: HomeComponent },
