@@ -31,7 +31,7 @@ export default class CameraComponent extends Component{
 
     _getBlobFromImagePath(path) {
       return RNFS.readFile(path, 'base64')
-        .then(file => file)
+        .then(file => file) // returns base64 string
         .catch(error => console.log(error))
     }
 }
