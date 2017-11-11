@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {Text, StyleSheet} from 'react-native'
 import Camera from 'react-native-camera'
 import RNFS from 'react-native-fs'
+import ImageResizerService from '../../../Services/ImageResizer.service'
+import APIUtils from '../../../Services/EmotionAPI.service'
 
 export default class CameraComponent extends Component{
     static navigationOptions = {
@@ -24,8 +26,9 @@ export default class CameraComponent extends Component{
     takePicture() {
         const options = {};
         this.camera.capture({metadata: options})
-        .then(data => this._getBlobFromImagePath(data.path))
-        .then()
+        .then(data => ImageResizerService.resizeImage(data.path))
+        .then(resizedImageUri => this._getBlobFromImagePath(resizedImageUri))
+        .then(base64image => this._getEmotionsFromImage(base64image))
         .catch(err => console.error(err))
     }
 
@@ -34,6 +37,11 @@ export default class CameraComponent extends Component{
         .then(file => file) // returns base64 string
         .catch(error => console.log(error))
     }
+
+    _getEmotionsFromImage(base64image) {
+      APIUtils.getEmotions(base64image)
+      .then(res => console.log(res))
+    } 
 }
 
 const styles = StyleSheet.create({
