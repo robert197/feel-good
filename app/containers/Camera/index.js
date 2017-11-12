@@ -4,6 +4,7 @@ import Camera from 'react-native-camera'
 import RNFS from 'react-native-fs'
 import ImageResizerService from '../../../Services/ImageResizer.service'
 import APIUtils from '../../../Services/EmotionAPI.service'
+import Icon from 'react-native-vector-icons/dist/Ionicons';
 
 export default class CameraComponent extends Component {
     static navigationOptions = {
@@ -38,7 +39,7 @@ export default class CameraComponent extends Component {
             type={Camera.constants.Type.front}>
             { this.state.isLoading ? <Text style={styles.loadingText}>Loading...</Text> : <Text></Text> }
             { this.result() }
-            <Text style={styles.capture} onPress={this.takePicture.bind(this)}>MACH FOTO!</Text>
+            <Text style={styles.capture} onPress={this.takePicture.bind(this)}><Icon name="ios-camera-outline" size={60} color="black" /></Text>
           </Camera>
         )
     }
@@ -46,7 +47,7 @@ export default class CameraComponent extends Component {
     result() {
       let procentualHappiness = Math.round(this.state.happiness * 100)
       let showResult = this.state.happiness > 0
-      console.log(procentualHappiness);
+      console.log('happiness: ', procentualHappiness)
       if (showResult) {
         return procentualHappiness >= 50
                ? <Text style={styles.valuesPreview}>Great! You are ({procentualHappiness}%) happy</Text>
@@ -69,7 +70,7 @@ export default class CameraComponent extends Component {
 
     _getBlobFromImagePath(path) {
       return RNFS.readFile(path, 'base64')
-        .then(file => file) // returns base64 string
+        .then(base64string => base64string)
         .catch(error => console.log(error))
     }
 
@@ -77,7 +78,7 @@ export default class CameraComponent extends Component {
       APIUtils.getEmotions(base64image)
       .then(emotions => {
         this.setState((state) => {
-          state.happiness = parseFloat(emotions[0].scores.happiness)
+          state.happiness = !!emotions[0] ? parseFloat(emotions[0].scores.happiness) : 0
           state.isLoading = false
           return state;
         })
@@ -93,10 +94,14 @@ const styles = StyleSheet.create({
     },
     capture: {
       flex: 0,
+      opacity: 0.6,
       backgroundColor: '#fff',
-      borderRadius: 5,
+      borderRadius: 50,
       color: '#000',
-      padding: 10,
+      paddingTop: 2,
+      paddingBottom: 2,
+      paddingRight: 8,
+      paddingLeft: 8,
       margin: 40
     },
     valuesPreview: {
