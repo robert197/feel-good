@@ -12,7 +12,8 @@ import {
 import CameraComponent from '../Camera'
 import APIUtils from '../../../Services/EmotionAPI.service'
 import FAB from 'react-native-fab'
-import Icon from 'react-native-vector-icons/dist/Ionicons';
+import Icon from 'react-native-vector-icons/dist/Ionicons'
+import ImagesGridComponent from '../../components/ImagesGrid'
 
 const COLORS = {
   mainColor: '#FBC02D',
@@ -43,7 +44,8 @@ export default class HomeComponent extends Component {
           <Text style={styles.smile}>Smiles</Text>
           <Icon style={styles.moreIcon} size={30} name="md-more" />
         </View>
-        <FAB buttonColor={COLORS.mainColor} iconTextColor={COLORS.textColor} onClickAction={() => {this._openCamera()}} visible={true} iconTextComponent={<Icon name="ios-add-outline"/>} />
+        <ImagesGridComponent style={styles.imagesGrid} />
+        <FAB style={styles.fabButton} buttonColor={COLORS.mainColor} iconTextColor={COLORS.textColor} onClickAction={() => {this._openCamera()}} visible={true} iconTextComponent={<Icon name="md-add"/>} />
       </View>
     );
   }
@@ -61,14 +63,20 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    flex: 1,
     justifyContent: 'space-between',
     paddingTop: 10,
+    paddingBottom: 10,
     paddingLeft: 16
   },
   moreIcon: {
     marginTop: 12,
     marginRight: 16,
     color: '#212121'
+  },
+  imagesGrid: {
+    flexDirection: 'column'
+  },
+  fabButton: {
+    marginBottom: 40
   }
 });
