@@ -13,7 +13,7 @@ import APIUtils from '../../../Services/EmotionAPI.service'
 
 export default class HomeComponent extends Component {
   static navigationOptions = {
-    title: 'Welcome'
+    title: 'Give a Smile'
   }
   
   constructor(props, context) {
@@ -48,10 +48,6 @@ export default class HomeComponent extends Component {
     return (
       <View style={styles.container}>
         <Button onPress={this._openCamera} title="open camera"></Button>
-        <Button onPress={this._getEmotions} title="get emotion"></Button>
-        {Object.keys(this.state.emotionValues).map((emotion, i) => {
-          return <View key={'emotion:' + i}><Text key={'key:' + i}>{emotion}</Text><Text key={'value:' + i}>{this.state.emotionValues[emotion]}</Text></View>
-        })}
       </View>
     );
   }
@@ -61,5 +57,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+    padding: 10
   }
 });

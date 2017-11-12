@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Text, StyleSheet, View} from 'react-native'
+import {Text, StyleSheet, View, ActivityIndicator} from 'react-native'
 import Camera from 'react-native-camera'
 import RNFS from 'react-native-fs'
 import ImageResizerService from '../../../Services/ImageResizer.service'
@@ -7,10 +7,6 @@ import APIUtils from '../../../Services/EmotionAPI.service'
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 
 export default class CameraComponent extends Component {
-    static navigationOptions = {
-      title: 'Camera'
-    }
-
     static CAMERA_OPTIONS = {
       audio: 'false', // IOS only
       mode: 'still',
@@ -37,7 +33,7 @@ export default class CameraComponent extends Component {
             style={styles.preview}
             aspect={Camera.constants.Aspect.fill}
             type={Camera.constants.Type.front}>
-            { this.state.isLoading ? <Text style={styles.loadingText}>Loading...</Text> : <Text></Text> }
+            { this.state.isLoading ? <ActivityIndicator size={'large'} color={'white'} /> : <ActivityIndicator animating={false} /> }
             { this.result() }
             <Text style={styles.capture} onPress={this.takePicture.bind(this)}><Icon name="ios-camera-outline" size={60} color="black" /></Text>
           </Camera>
@@ -77,6 +73,7 @@ export default class CameraComponent extends Component {
     _getEmotionsFromImage(base64image) {
       APIUtils.getEmotions(base64image)
       .then(emotions => {
+        console.log('api response: ', emotions)
         this.setState((state) => {
           state.happiness = !!emotions[0] ? parseFloat(emotions[0].scores.happiness) : 0
           state.isLoading = false
