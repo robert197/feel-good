@@ -5,7 +5,7 @@ import RNFS from 'react-native-fs'
 import ImageResizerService from '../../../Services/ImageResizer.service'
 import APIUtils from '../../../Services/EmotionAPI.service'
 
-export default class CameraComponent extends Component{
+export default class CameraComponent extends Component {
     static navigationOptions = {
       title: 'Camera'
     }
@@ -20,7 +20,10 @@ export default class CameraComponent extends Component{
     constructor(props, context) {
       super(props, context)
       this.state = {
-        emotionValues: {}
+        emotionValues: {},
+        isHappy: false,
+        isLoading: false,
+        happiness: 0
       }
     }
 
@@ -33,26 +36,35 @@ export default class CameraComponent extends Component{
             style={styles.preview}
             aspect={Camera.constants.Aspect.fill}
             type={Camera.constants.Type.front}>
-
-            { Object.keys(this.state.emotionValues)
-              .map((emotion, i) => {
-                return <View key={ 'emotion:' + i }>
-                          <Text style={styles.valuesPreview} key={ 'key:' + i }>{ emotion }</Text>
-                          <Text style={styles.valuesPreview} key={ 'value:' + i }>{ this.state.emotionValues[emotion] }</Text>
-                       </View>
-              }) }
-
+            { this.state.isLoading ? <Text style={styles.loadingText}>Loading...</Text> : <Text></Text> }
+            { this.result() }
             <Text style={styles.capture} onPress={this.takePicture.bind(this)}>MACH FOTO!</Text>
           </Camera>
         )
     }
 
+    result() {
+      let procentualHappiness = Math.round(this.state.happiness * 100)
+      let showResult = this.state.happiness > 0
+      console.log(procentualHappiness);
+      if (showResult) {
+        return procentualHappiness >= 50
+               ? <Text style={styles.valuesPreview}>Great! You are ({procentualHappiness}%) happy</Text>
+               : <Text style={styles.valuesPreview}>You happiness is only ({procentualHappiness}%)
+               ... Smile!</Text>
+      }
+    }
+
     takePicture() {
-        this.camera.capture({metadata: this.CAMERA_OPTIONS})
-        .then(data => ImageResizerService.resizeImage(data.path))
-        .then(resizedImageUri => this._getBlobFromImagePath(resizedImageUri))
-        .then(base64image => this._getEmotionsFromImage(base64image))
-        .catch(err => console.error(err))
+      this.setState(state => {
+        state.isLoading = true
+        return state
+      })
+      this.camera.capture({metadata: this.CAMERA_OPTIONS})
+      .then(data => ImageResizerService.resizeImage(data.path))
+      .then(resizedImageUri => this._getBlobFromImagePath(resizedImageUri))
+      .then(base64image => this._getEmotionsFromImage(base64image))
+      .catch(err => console.error(err))
     }
 
     _getBlobFromImagePath(path) {
@@ -64,7 +76,11 @@ export default class CameraComponent extends Component{
     _getEmotionsFromImage(base64image) {
       APIUtils.getEmotions(base64image)
       .then(emotions => {
-        this.setState((state) => state.emotionValues = emotions[0].scores)
+        this.setState((state) => {
+          state.happiness = parseFloat(emotions[0].scores.happiness)
+          state.isLoading = false
+          return state;
+        })
       })
     } 
 }
@@ -84,6 +100,12 @@ const styles = StyleSheet.create({
       margin: 40
     },
     valuesPreview: {
-      color: 'white'
+      color: 'white',
+      fontSize: 20,
+      fontWeight: 'bold'
+    },
+    loadingText: {
+      color: 'white',
+      fontSize: 16
     }
   });
