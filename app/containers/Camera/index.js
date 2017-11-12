@@ -7,6 +7,18 @@ import APIUtils from '../../../Services/EmotionAPI.service'
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 
 export default class CameraComponent extends Component {
+
+    static navigationOptions = {
+      headerStyle: {
+        backgroundColor: 'transparent',
+        position: 'absolute',
+        zIndex: 100,
+        top: 0,
+        left: 0,
+        right: 0
+      },
+      headerTintColor: 'white'
+    }
     static CAMERA_OPTIONS = {
       audio: 'false', // IOS only
       mode: 'still',
@@ -46,9 +58,11 @@ export default class CameraComponent extends Component {
       console.log('happiness: ', procentualHappiness)
       if (showResult) {
         return procentualHappiness >= 50
-               ? <Text style={styles.valuesPreview}>Great! You are ({procentualHappiness}%) happy</Text>
+               ? <Text style={styles.valuesPreview}>Great! You are ({procentualHappiness}%) happy!</Text>
                : <Text style={styles.valuesPreview}>You happiness is only ({procentualHappiness}%)
                ... Smile!</Text>
+      } else {
+        return <Text></Text>
       }
     }
 
@@ -91,7 +105,6 @@ const styles = StyleSheet.create({
     },
     capture: {
       flex: 0,
-      opacity: 0.6,
       backgroundColor: '#fff',
       borderRadius: 50,
       color: '#000',
