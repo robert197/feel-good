@@ -47,7 +47,7 @@ export default class CameraComponent extends Component {
             type={Camera.constants.Type.front}>
             { this.state.isLoading ? <ActivityIndicator size={'large'} color={'white'} /> : <ActivityIndicator animating={false} /> }
             { this.result() }
-            <Text style={styles.capture} onPress={this.takePicture.bind(this)}><Icon name="ios-camera-outline" size={60} color="black" /></Text>
+            <Text style={styles.capture} disabled={this.state.isLoading} onPress={this.takePicture.bind(this)}><Icon name="ios-camera-outline" size={60} color="black" /></Text>
           </Camera>
         )
     }
