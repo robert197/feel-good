@@ -19,6 +19,7 @@ export default class ImagesGridComponent extends Component {
       }
     }
 
+  // will be executed as soon as component is visible on the screen
   componentWillMount() {
     
   }

@@ -51,8 +51,7 @@ export default class HomeComponent extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'column'
+    flex: 1
   },
   fabButton: {
     marginBottom: 40

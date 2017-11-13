@@ -23,7 +23,13 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
       paddingTop: 10,
       paddingBottom: 10,
-      paddingLeft: 16
+      paddingLeft: 16,
+      paddingRight: 16,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.2,
+      elevation: 2,
+      position: 'relative'
     },
     text: {
       fontSize: 38,
@@ -32,7 +38,6 @@ const styles = StyleSheet.create({
     },
     moreIcon: {
       marginTop: 12,
-      marginRight: 16,
       color: '#212121'
     },
 })
