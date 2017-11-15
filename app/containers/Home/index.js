@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  Dimensions,
   StyleSheet,
   Text,
   TouchableHighlight,
-  View,
-  Button,
-  ActivityIndicator
+  View
 } from 'react-native';
 import CameraComponent from '../Camera'
 import APIUtils from '../../../Services/EmotionAPI.service'
@@ -21,7 +17,7 @@ const COLORS = {
   textColor: 'black'
 }
 
-export default class HomeComponent extends Component {
+export default class Home extends Component {
  
   static navigationOptions = {
     header: null
@@ -33,7 +29,6 @@ export default class HomeComponent extends Component {
   }
 
   _openCamera() {
-    console.log('open camera')
     const { navigate } = this.props.navigation
     navigate('Camera')
   }
