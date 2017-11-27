@@ -6,6 +6,7 @@ import {
     TextInput
 } from 'react-native'
 import Header from '../../components/Header'
+import firebase from 'react-native-firebase';
 
 const config = {
     apiKey: 'AIzaSyC-0XuqCpAvHv8qsb1UDkSc8yjihIsC7Dc',
