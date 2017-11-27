@@ -7,6 +7,12 @@ import {
 } from 'react-native'
 import Header from '../../components/Header'
 
+const config = {
+    apiKey: 'AIzaSyC-0XuqCpAvHv8qsb1UDkSc8yjihIsC7Dc',
+    authDomain: 'feelgood-3c6a8.firebaseio.com/',
+    databaseUrl: 'https://feelgood-3c6a8.firebaseio.com/'
+}
+
 export default class Login extends Component {
     
     static navigationOptions = {
@@ -47,5 +53,4 @@ export default class Login extends Component {
         const { navigate } = this.props.navigation
         navigate('Home')
     }
-
 }
