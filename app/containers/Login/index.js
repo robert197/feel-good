@@ -23,6 +23,7 @@ export default class Login extends Component {
     constructor(props, context) {
         super(props, context)
         this._openHome = this._openHome.bind(this)
+        this._openRegistration = this._openRegistration.bind(this)
         this.state = { mail: '', password: '' }
     }
 
@@ -34,6 +35,7 @@ export default class Login extends Component {
                 <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                 onChangeText={(mail) => this.setState({mail})}
+                placeholder={'E-Mail'}
                 keyboardType={'email-address'}
                 value={this.state.mail}
                 />
@@ -41,17 +43,22 @@ export default class Login extends Component {
                 <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                 onChangeText={(password) => this.setState({password})}
+                placeholder={'Password'}
                 value={this.state.password}
                 secureTextEntry={true}
                 />
 
                 <Button title="Login" onPress={this._openHome}/>
+                <Button title="Register" onPress={this._openRegistration}/>
             </View>
         )
     }
 
     _openHome() {
-        const { navigate } = this.props.navigation
-        navigate('Home')
+        this.props.navigation.navigate('Home')
+    }
+
+    _openRegistration() {
+        this.props.navigation.navigate('Registration')
     }
 }
