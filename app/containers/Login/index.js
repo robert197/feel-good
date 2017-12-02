@@ -3,7 +3,9 @@ import {
     StyleSheet,
     View,
     Button,
-    TextInput
+    TextInput,
+    Text,
+    Keyboard
 } from 'react-native'
 import Header from '../../components/Header'
 import firebase from 'react-native-firebase';
@@ -23,8 +25,9 @@ export default class Login extends Component {
     constructor(props, context) {
         super(props, context)
         this._openHome = this._openHome.bind(this)
+        this._login = this._login.bind(this)
         this._openRegistration = this._openRegistration.bind(this)
-        this.state = { mail: '', password: '' }
+        this.state = { mail: '', password: '', validationMessage: '' }
     }
 
     render() {
@@ -35,7 +38,7 @@ export default class Login extends Component {
                 <TextInput
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                 onChangeText={(mail) => this.setState({mail})}
-                placeholder={'E-Mail'}
+                placeholder={'Email'}
                 keyboardType={'email-address'}
                 value={this.state.mail}
                 />
@@ -48,10 +51,23 @@ export default class Login extends Component {
                 secureTextEntry={true}
                 />
 
-                <Button title="Login" onPress={this._openHome}/>
+                <Button title="Login" onPress={this._login}/>
                 <Button title="Register" onPress={this._openRegistration}/>
+
+                <Text>{ this.state.validationMessage }</Text>
             </View>
         )
+    }
+
+    _login() {
+        firebase.auth().signInWithEmailAndPassword(this.state.mail, this.state.password)
+        .then((user) => {
+            Keyboard.dismiss()
+            this._openHome()
+        })
+        .catch(() => {
+            this.setState({validationMessage: 'Email or password was wrong. Please check if your data is correct or create new account.'})
+        })
     }
 
     _openHome() {
