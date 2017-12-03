@@ -30,7 +30,7 @@ export default class Register extends Component {
         this._openLogin = this._openLogin.bind(this)
         this._register = this._register.bind(this)
         this._dataIsValid = this._dataIsValid.bind(this)
-        this.state = { firstName: '', lastName: '', mail: '', password: '', repeatPassword: '', validationMessage: '' }
+        this.state = { name: '', mail: '', password: '', repeatPassword: '', validationMessage: '' }
     }
 
     render() {
@@ -39,20 +39,15 @@ export default class Register extends Component {
                 <Header title="Registration"/>
 
                 <TextInput
+                autoCorrect={false}
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(firstName) => this.setState({firstName})}
-                placeholder={'First Name'}
-                value={this.state.firstName}
+                onChangeText={(name) => this.setState({name})}
+                placeholder={'Name'}
+                value={this.state.name}
                 />
 
                 <TextInput
-                style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(lastName) => this.setState({lastName})}
-                placeholder={'Last Name'}
-                value={this.state.lastName}
-                />
-
-                <TextInput
+                autoCorrect={false}
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                 onChangeText={(mail) => this.setState({mail})}
                 placeholder={'Email'}
@@ -61,6 +56,7 @@ export default class Register extends Component {
                 />
 
                 <TextInput
+                autoCorrect={false}
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                 onChangeText={(password) => this.setState({password})}
                 placeholder={'Password'}
@@ -69,6 +65,7 @@ export default class Register extends Component {
                 />
 
                 <TextInput
+                autoCorrect={false}
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                 onChangeText={(repeatPassword) => this.setState({repeatPassword})}
                 placeholder={'Repeat Password'}
@@ -79,6 +76,8 @@ export default class Register extends Component {
                 <Button title="Register" onPress={this._register}/>
 
                 <Text>{ this.state.validationMessage }</Text>
+
+                { this.state.loading ? <ActivityIndicator size={'large'}/> : null }
             </View>
         )
     }
