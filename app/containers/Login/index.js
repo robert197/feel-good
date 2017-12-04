@@ -6,16 +6,11 @@ import {
     TextInput,
     Text,
     Keyboard,
-    ActivityIndicator
+    ActivityIndicator,
+    Animated
 } from 'react-native'
 import Header from '../../components/Header'
 import firebase from 'react-native-firebase';
-
-const config = {
-    apiKey: 'AIzaSyC-0XuqCpAvHv8qsb1UDkSc8yjihIsC7Dc',
-    authDomain: 'feelgood-3c6a8.firebaseio.com/',
-    databaseUrl: 'https://feelgood-3c6a8.firebaseio.com/'
-}
 
 export default class Login extends Component {
     
@@ -28,12 +23,23 @@ export default class Login extends Component {
         this._openHome = this._openHome.bind(this)
         this._login = this._login.bind(this)
         this._openRegistration = this._openRegistration.bind(this)
-        this.state = { mail: '', password: '', validationMessage: '', loading: false }
+        this.state = {
+            mail: '',
+            password: '',
+            validationMessage: '',
+            loading: false,
+            fadeInAnimationValue: new Animated.Value(0)
+        }
+    }
+
+    componentDidMount() {
+        Animated.timing(this.state.fadeInAnimationValue, { toValue: 1, duration: 100 }).start();     
     }
 
     render() {
+        const { fadeInAnimationValue } = this.state
         return (
-            <View>
+            <Animated.View style={{ opacity: fadeInAnimationValue }}>
                 <Header title="Login"/>
 
                 <TextInput
@@ -60,11 +66,14 @@ export default class Login extends Component {
                 { this.state.loading ? <ActivityIndicator size={'large'}/> : null }
 
                 <Text>{ this.state.validationMessage }</Text>
-            </View>
+            </Animated.View>
         )
     }
 
     _login() {
+        if (!this.state.mail || !this.state.password) {
+            return false
+        }
         this._toggleLoading()
         firebase.auth().signInWithEmailAndPassword(this.state.mail, this.state.password)
         .then((user) => {

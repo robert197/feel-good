@@ -9,16 +9,6 @@ import {
 import Header from '../../components/Header'
 import firebase from 'react-native-firebase';
 
-const config = {
-    apiKey: "AIzaSyC-0XuqCpAvHv8qsb1UDkSc8yjihIsC7Dc",
-    authDomain: "feelgood-3c6a8.firebaseapp.com",
-    databaseURL: "https://feelgood-3c6a8.firebaseio.com",
-    projectId: "feelgood-3c6a8",
-    storageBucket: "feelgood-3c6a8.appspot.com",
-    messagingSenderId: "270985536317"
-  };
-firebase.initializeApp(config);
-
 export default class Register extends Component {
     
     static navigationOptions = {
@@ -83,9 +73,15 @@ export default class Register extends Component {
     }
 
     _register() {
+        if (!this._allFieldsAreFilled()) {
+            return false
+        }
         if (this._dataIsValid()) {
             firebase.auth().createUserWithEmailAndPassword(this.state.mail, this.state.password)
-            .then(this._openLogin)
+            .then(user => {
+                user.updateProfile({displayName: this.state.name})
+                this._openLogin()
+            })
             .catch(console.log)
         }
     }
@@ -95,7 +91,7 @@ export default class Register extends Component {
     }
 
     _dataIsValid() {
-        if (this.state.firstName && this.state.lastName && this.state.mail && this.state.mail && this.state.password && this.state.repeatPassword) {
+        if (this._allFieldsAreFilled()) {
             if (this.state.password === this.state.repeatPassword) {
                 return true
             }
@@ -105,5 +101,9 @@ export default class Register extends Component {
         this.setState({validationMessage: 'Not all fields are filled out'})
         return false
         
+    }
+
+    _allFieldsAreFilled() {
+        return this.state.name && this.state.mail && this.state.mail && this.state.password && this.state.repeatPassword
     }
 }
