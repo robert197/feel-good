@@ -27,16 +27,11 @@ export default class Home extends Component {
   constructor(props, context) {
     super(props, context)
     this._openCamera = this._openCamera.bind(this)
-    this._openMenu = this._openMenu.bind(this)
   }
 
   _openCamera() {
     const { navigate } = this.props.navigation
     navigate('Camera')
-  }
-
-  _openMenu() {
-    console.log('open menu')
   }
 
   render() {

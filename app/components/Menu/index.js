@@ -1,22 +1,41 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native'
+import { View, Text, StyleSheet, TouchableHighlight, Animated, LayoutAnimation, NativeModules } from 'react-native'
 import Icon from 'react-native-vector-icons/dist/Ionicons'
+const { UIManager } = NativeModules
+
+UIManager.setLayoutAnimationEnabledExperimental &&
+UIManager.setLayoutAnimationEnabledExperimental(true);
 
 export default class Menu extends Component {
     constructor(props, context) {
         super(props, context)
-        this.props = props
+        this._toggleMenu = this._toggleMenu.bind(this)
+        this.state = {
+            isOpen: false
+        }
+    }
+
+    _toggleMenu() {
+        LayoutAnimation.easeInEaseOut();
+        this.setState({
+            isOpen: !this.state.isOpen
+        })
     }
 
     render() {
+        let menuList = null
+        if (this.state.isOpen) {
+            menuList = <Animated.View style={styles.menuList}>
+                           <Text style={styles.menuItem}>Log out</Text>
+                       </Animated.View>
+        }
+        
         return (
             <View style={styles.menu}>
-                <TouchableHighlight underlayColor={'transparent'} style={styles.menuClickableArea} onPress={this._openMenu}>
+                <TouchableHighlight underlayColor={'transparent'} style={styles.menuClickableArea} onPress={this._toggleMenu}>
                     <Icon style={styles.moreIcon} size={30} name="md-more" />
                 </TouchableHighlight>
-                <View style={styles.menuWrapper}>
-                    <Text style={styles.menuItem}>Log out</Text>
-                </View>
+                { menuList }
             </View>
         )
     }
@@ -29,21 +48,23 @@ const styles = StyleSheet.create({
         right: 10,
         top: 10
     },
-    menuWrapper: {
-        flex: 1,
-        padding: 10,
-        backgroundColor: 'white',
-        width: 150,
-        height: 150,
-        elevation: 1
-    },
     menuClickableArea: {
         paddingLeft: 10,
         paddingRight: 10,
         right: 0
     },
+    menuList: {
+        flex: 1,
+        padding: 15,
+        backgroundColor: 'white',
+        width: 150,
+        height: 150,
+        elevation: 2,
+        borderRadius: 3
+    },
     menuItem: {
-        fontSize: 20,
+        fontSize: 18,
+        color: 'black'
     },
     moreIcon: {
         alignSelf: 'flex-end',
