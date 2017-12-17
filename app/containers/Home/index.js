@@ -12,6 +12,7 @@ import ImagesGridComponent from '../../components/ImagesGrid'
 import Header from '../../components/Header'
 import Menu from '../../components/Menu'
 import Icon from 'react-native-vector-icons/dist/Ionicons'
+import firebase from 'react-native-firebase';
 
 const COLORS = {
   mainColor: '#FBC02D',
@@ -27,6 +28,7 @@ export default class Home extends Component {
   constructor(props, context) {
     super(props, context)
     this._openCamera = this._openCamera.bind(this)
+    this._getMenuItems = this._getMenuItems.bind(this)
   }
 
   _openCamera() {
@@ -34,11 +36,21 @@ export default class Home extends Component {
     navigate('Camera')
   }
 
+  _getMenuItems() {
+    return [
+      {
+        text: 'Log out',
+        method: () => {
+          firebase.auth().signOut()
+        }
+      }
+    ]
+  }
+
   render() {
-    
     return (
       <View style={styles.container}>
-        <Menu />
+        <Menu items={this._getMenuItems()}/>
         <Header title="Smiles"/>
         <ImagesGridComponent />
         <FAB style={styles.fabButton} buttonColor={COLORS.mainColor} iconTextColor={COLORS.textColor} onClickAction={() => {this._openCamera()}} visible={true} iconTextComponent={<Icon name="md-add"/>} />

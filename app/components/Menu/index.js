@@ -9,6 +9,7 @@ UIManager.setLayoutAnimationEnabledExperimental(true);
 export default class Menu extends Component {
     constructor(props, context) {
         super(props, context)
+        this.props = props
         this._toggleMenu = this._toggleMenu.bind(this)
         this.state = {
             isOpen: false
@@ -26,7 +27,7 @@ export default class Menu extends Component {
         let menuList = null
         if (this.state.isOpen) {
             menuList = <Animated.View style={styles.menuList}>
-                           <Text style={styles.menuItem}>Log out</Text>
+                            {this.props.items.map(item => <Text key={item.text} onPress={item.method} style={styles.menuItem}>{item.text}</Text>)}
                        </Animated.View>
         }
         
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
         borderRadius: 3
     },
     menuItem: {
-        fontSize: 18,
+        fontSize: 16,
         color: 'black'
     },
     moreIcon: {
