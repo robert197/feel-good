@@ -4,7 +4,8 @@ import Camera from 'react-native-camera'
 import RNFS from 'react-native-fs'
 import ImageResizerService from '../../../Services/ImageResizer.service'
 import APIUtils from '../../../Services/EmotionAPI.service'
-import Icon from 'react-native-vector-icons/dist/Ionicons';
+import Icon from 'react-native-vector-icons/dist/Ionicons'
+import firebase from 'react-native-firebase'
 
 export default class CameraComponent extends Component {
 
@@ -55,7 +56,6 @@ export default class CameraComponent extends Component {
     result() {
       let procentualHappiness = Math.round(this.state.happiness * 100)
       let showResult = this.state.happiness > 0
-      console.log('happiness: ', procentualHappiness)
       if (showResult) {
         return procentualHappiness >= 50
                ? <Text style={styles.valuesPreview}>Great! You are ({procentualHappiness}%) happy!</Text>
@@ -67,14 +67,21 @@ export default class CameraComponent extends Component {
     }
 
     takePicture() {
+      let imageUri = null
       this.setState(state => {
         state.isLoading = true
         return state
       })
       this.camera.capture({metadata: this.CAMERA_OPTIONS})
       .then(data => ImageResizerService.resizeImage(data.path))
-      .then(resizedImageUri => this._getBlobFromImagePath(resizedImageUri))
+      .then(resizedImageUri => {
+        imageUri = resizedImageUri
+        return this._getBlobFromImagePath(resizedImageUri)
+      })
       .then(base64image => this._getEmotionsFromImage(base64image))
+      .then(() => {
+        this._uploadImage(imageUri, this.state.happiness)
+      })
       .catch(err => console.error(err))
     }
 
@@ -85,16 +92,26 @@ export default class CameraComponent extends Component {
     }
 
     _getEmotionsFromImage(base64image) {
-      APIUtils.getEmotions(base64image)
+      return APIUtils.getEmotions(base64image)
       .then(emotions => {
-        console.log('api response: ', emotions)
         this.setState((state) => {
           state.happiness = !!emotions[0] ? parseFloat(emotions[0].scores.happiness) : 0
           state.isLoading = false
           return state;
         })
       })
-    } 
+    }
+    
+    _uploadImage(filePath, happiness) {
+      const pathArray = filePath.split('/')
+      const imageName = pathArray[pathArray.length - 1].split('.')[0] + '-!-' + this.state.happiness + '.jpg'
+      firebase.storage()
+      .ref('images')
+      .child(`${firebase.auth().currentUser.uid}/${imageName}`)
+      .putFile(filePath)
+      .then(console.log)
+      .catch(console.log)
+    }
 }
 
 const styles = StyleSheet.create({
