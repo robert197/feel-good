@@ -12,6 +12,8 @@ import Home from './app/containers/Home'
 import CameraComponent from './app/containers/Camera'
 import Login from './app/containers/Login'
 import Registration from './app/containers/Registration'
+import { Provider } from 'react-redux'
+import configureStore from './app/configureStore'
 
 const SigningNavigator = StackNavigator({
   Login: { screen: Login },
@@ -24,10 +26,13 @@ const MainNavigator = StackNavigator({
 })
 
 export default class App extends Component {
+  
+  store = null
 
   constructor(props, context) {
     super(props, context)
     this.state = {loggedIn: false}
+    this.store = configureStore()
   }
 
   componentWillMount() {
@@ -39,10 +44,12 @@ export default class App extends Component {
       }
     })
   }
-
+  
   render() {
     return (
-      this._renderNavigation()
+      <Provider store={this.store}>
+        { this._renderNavigation() }
+      </Provider>
     )
   }
 
