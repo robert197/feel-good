@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
-import {Text, StyleSheet, View, ActivityIndicator} from 'react-native'
+import {Text, StyleSheet, View, ActivityIndicator, Image} from 'react-native'
 import Camera from 'react-native-camera'
 import RNFS from 'react-native-fs'
 import ImageResizerService from '../../../Services/ImageResizer.service'
 import APIUtils from '../../../Services/EmotionAPI.service'
 import Icon from 'react-native-vector-icons/dist/Ionicons'
 import firebase from 'react-native-firebase'
+import Modal from 'react-native-modalbox';
 
 export default class CameraComponent extends Component {
 
@@ -33,41 +34,71 @@ export default class CameraComponent extends Component {
         emotionValues: {},
         isHappy: false,
         isLoading: false,
-        happiness: 0
+        happiness: 0,
+        isPreviewReady: false,
+        imageUri: '',
+        previewImage: false
       }
+      this._onCloseModal = this._onCloseModal.bind(this)
     }
 
     render() {
-        return (
-            <Camera
-            ref={(cam) => {
-              this.camera = cam;
-            }}
-            style={styles.preview}
-            aspect={Camera.constants.Aspect.fill}
-            type={Camera.constants.Type.front}>
-            { this.state.isLoading ? <ActivityIndicator size={'large'} color={'white'} /> : <ActivityIndicator animating={false} /> }
-            { this.result() }
-            <Text style={styles.capture} disabled={this.state.isLoading} onPress={this.takePicture.bind(this)}><Icon name="ios-camera-outline" size={60} color="black" /></Text>
-          </Camera>
-        )
+      return (
+        <Camera
+        ref={(cam) => {
+          this.camera = cam;
+        }}
+        style={styles.preview}
+        aspect={Camera.constants.Aspect.fill}
+        type={Camera.constants.Type.front}>
+
+        { this._showImagePreview() }
+        { this.result() }
+
+        <View style={{display: this.state.previewImage ? 'none' : 'flex'}}>
+          { this.state.isLoading ? <ActivityIndicator size={'large'} color={'white'} /> : <ActivityIndicator animating={false} /> }
+          <Text style={styles.capture} disabled={this.state.isLoading} onPress={this.takePicture.bind(this)}><Icon name="ios-camera-outline" size={60} color="black" /></Text>
+        </View>
+
+      </Camera>
+      )
+    }
+
+    _onCloseModal() {
+      this.setState({previewImage: false})
+    }
+
+    _showImagePreview() {      
+      return (
+        <Modal style={{
+          height: 600,
+          backgroundColor: "white",
+        }}
+        backdrop={false}
+        position={"top"}
+        isOpen={this.state.previewImage}
+        onClosed={this._onCloseModal}>
+          <Image source={{uri: this.state.imageUri}} style={{flex: 1}}></Image>
+        </Modal>
+      )
     }
 
     result() {
       let procentualHappiness = Math.round(this.state.happiness * 100)
       let showResult = this.state.happiness > 0
       if (showResult) {
-        return procentualHappiness >= 50
-               ? <Text style={styles.valuesPreview}>Great! You are ({procentualHappiness}%) happy!</Text>
-               : <Text style={styles.valuesPreview}>You happiness is only ({procentualHappiness}%)
-               ... Smile!</Text>
+        return (procentualHappiness < 50) && !this.state.isLoading
+        ? <Text style={styles.valuesPreview}>You happiness is only ({procentualHappiness}%) ... Smile!</Text>
+        : <Text
+        style={{display: this.state.previewImage ? 'flex' : 'none', color: 'white'}}>
+          Great you are ({procentualHappiness}%) happy! Now you can donate by posting your image and watching a video!
+        </Text>
       } else {
         return <Text></Text>
       }
     }
 
     takePicture() {
-      let imageUri = null
       this.setState(state => {
         state.isLoading = true
         return state
@@ -75,30 +106,38 @@ export default class CameraComponent extends Component {
       this.camera.capture({metadata: this.CAMERA_OPTIONS})
       .then(data => ImageResizerService.resizeImage(data.path))
       .then(resizedImageUri => {
-        imageUri = resizedImageUri
+        this.setState({imageUri: resizedImageUri})
         return this._getBlobFromImagePath(resizedImageUri)
       })
       .then(base64image => this._getEmotionsFromImage(base64image))
-      .then(() => {
-        this._uploadImage(imageUri, this.state.happiness)
+      .then(happiness => {
+        if (happiness >= 0.5) {
+          console.log('happy!')
+          this.setState({previewImage: true})
+        }
       })
-      .catch(err => console.error(err))
+      .then(() => {
+        this._uploadImage(this.state.imageUri, this.state.happiness)
+      })
+      .catch(console.log)
     }
 
     _getBlobFromImagePath(path) {
       return RNFS.readFile(path, 'base64')
         .then(base64string => base64string)
-        .catch(error => console.log(error))
+        .catch(console.log)
     }
 
     _getEmotionsFromImage(base64image) {
       return APIUtils.getEmotions(base64image)
       .then(emotions => {
+        const happiness = !!emotions[0] ? parseFloat(emotions[0].scores.happiness) : 0
         this.setState((state) => {
-          state.happiness = !!emotions[0] ? parseFloat(emotions[0].scores.happiness) : 0
+          state.happiness = happiness
           state.isLoading = false
           return state;
         })
+        return happiness
       })
     }
     
