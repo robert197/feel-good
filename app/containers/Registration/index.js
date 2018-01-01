@@ -4,12 +4,15 @@ import {
     View,
     Button,
     TextInput,
-    Text
+    Text,
+    ActivityIndicator
 } from 'react-native'
 import Header from '../../components/Header'
-import firebase from 'react-native-firebase';
+import firebase from 'react-native-firebase'
+import { connect } from 'react-redux'
+import { nameChanged, emailChanged, passwordChanged, confirmPasswordChanged, registerUser } from '../../actions' 
 
-export default class Register extends Component {
+class Register extends Component {
     
     static navigationOptions = {
         header: null
@@ -17,10 +20,6 @@ export default class Register extends Component {
 
     constructor(props, context) {
         super(props, context)
-        this._openLogin = this._openLogin.bind(this)
-        this._register = this._register.bind(this)
-        this._dataIsValid = this._dataIsValid.bind(this)
-        this.state = { name: '', mail: '', password: '', repeatPassword: '', validationMessage: '' }
     }
 
     render() {
@@ -31,79 +30,56 @@ export default class Register extends Component {
                 <TextInput
                 autoCorrect={false}
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(name) => this.setState({name})}
+                onChangeText={this.props.nameChanged}
                 placeholder={'Name'}
-                value={this.state.name}
+                value={this.props.name}
                 />
 
                 <TextInput
                 autoCorrect={false}
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(mail) => this.setState({mail})}
+                onChangeText={this.props.emailChanged}
                 placeholder={'Email'}
                 keyboardType={'email-address'}
-                value={this.state.mail}
+                value={this.props.email}
                 />
 
                 <TextInput
                 autoCorrect={false}
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(password) => this.setState({password})}
+                onChangeText={this.props.passwordChanged}
                 placeholder={'Password'}
-                value={this.state.password}
+                value={this.props.password}
                 secureTextEntry={true}
                 />
 
                 <TextInput
                 autoCorrect={false}
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(repeatPassword) => this.setState({repeatPassword})}
-                placeholder={'Repeat Password'}
-                value={this.state.repeatPassword}
+                onChangeText={this.props.confirmPasswordChanged}
+                placeholder={'Confirm Password'}
+                value={this.props.confirmPassword}
                 secureTextEntry={true}
                 />
 
-                <Button title="Register" onPress={this._register}/>
+                <Button title="Register" onPress={this.register.bind(this)}/>
 
-                <Text>{ this.state.validationMessage }</Text>
+                <Text>{ this.props.error }</Text>
 
-                { this.state.loading ? <ActivityIndicator size={'large'}/> : null }
+                { this.props.loading ? <ActivityIndicator size={'large'}/> : null }
             </View>
         )
     }
 
-    _register() {
-        if (!this._allFieldsAreFilled()) {
-            return false
-        }
-        if (this._dataIsValid()) {
-            firebase.auth().createUserWithEmailAndPassword(this.state.mail, this.state.password)
-            .then(user => {
-                user.updateProfile({displayName: this.state.name})
-                this._openLogin()
-            })
-            .catch(console.log)
-        }
-    }
-
-    _openLogin() {
-        this.props.navigation.navigate('Login')
-    }
-
-    _dataIsValid() {
-        if (this._allFieldsAreFilled()) {
-            if (this.state.password === this.state.repeatPassword) {
-                return true
-            }
-            this.setState({validationMessage: 'Passwords do not match'})
-            return false
-        }
-        this.setState({validationMessage: 'Not all fields are filled out'})
-        return false
-        
-    }
-
-    _allFieldsAreFilled() {
-        return this.state.name && this.state.mail && this.state.mail && this.state.password && this.state.repeatPassword
+    register() {
+        const { name, email, password, confirmPassword } = this.props
+        this.props.registerUser(name, email, password, confirmPassword)
     }
 }
+
+const mapStateProps = state => {
+    const { name, email, password, confirmPassword, loading, error } = state.auth
+    return { name, email, password, confirmPassword, loading, error }
+}
+
+export default connect(mapStateProps, { nameChanged, emailChanged, passwordChanged, confirmPasswordChanged, registerUser })(Register)
