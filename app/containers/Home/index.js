@@ -13,13 +13,14 @@ import Header from '../../components/Header'
 import Menu from '../../components/Menu'
 import Icon from 'react-native-vector-icons/dist/Ionicons'
 import firebase from 'react-native-firebase';
+import { connect } from 'react-redux'
 
 const COLORS = {
   mainColor: '#FBC02D',
   textColor: 'black'
 }
 
-export default class Home extends Component {
+class Home extends Component {
  
   static navigationOptions = {
     header: null
@@ -37,6 +38,7 @@ export default class Home extends Component {
   }
 
   _getMenuItems() {
+    console.log(this.props)
     return [
       {
         text: 'Log out',
@@ -67,3 +69,9 @@ const styles = StyleSheet.create({
     marginBottom: 40
   }
 });
+
+const mapStateProps = state => {
+  return {allPictures: state.allPictures}
+}
+
+export default connect(mapStateProps)(Home)

@@ -25,7 +25,7 @@ export default class CameraComponent extends Component {
       audio: 'false', // IOS only
       mode: 'still',
       target: 'temp',
-      jpegQuality: '70'
+      jpegQuality: '75'
     }
 
     constructor(props, context) {
