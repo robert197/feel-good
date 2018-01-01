@@ -38,7 +38,6 @@ class Home extends Component {
   }
 
   _getMenuItems() {
-    console.log(this.props)
     return [
       {
         text: 'Log out',

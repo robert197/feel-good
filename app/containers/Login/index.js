@@ -10,9 +10,11 @@ import {
     Animated
 } from 'react-native'
 import Header from '../../components/Header'
-import firebase from 'react-native-firebase';
+import firebase from 'react-native-firebase'
+import { connect } from 'react-redux'
+import { emailChanged, passwordChanged } from '../../actions/'
 
-export default class Login extends Component {
+class Login extends Component {
     
     static navigationOptions = {
         header: null
@@ -24,8 +26,6 @@ export default class Login extends Component {
         this._login = this._login.bind(this)
         this._openRegistration = this._openRegistration.bind(this)
         this.state = {
-            mail: '',
-            password: '',
             validationMessage: '',
             loading: false,
             fadeInAnimationValue: new Animated.Value(0)
@@ -45,18 +45,18 @@ export default class Login extends Component {
                 <TextInput
                 autoCorrect={false}
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(mail) => this.setState({mail})}
+                onChangeText={this.props.emailChanged}
                 placeholder={'Email'}
                 keyboardType={'email-address'}
-                value={this.state.mail}
+                value={this.props.email}
                 />
 
                 <TextInput
                 autoCorrect={false}
                 style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                onChangeText={(password) => this.setState({password})}
+                onChangeText={this.props.passwordChanged}
                 placeholder={'Password'}
-                value={this.state.password}
+                value={this.props.password}
                 secureTextEntry={true}
                 />
 
@@ -71,11 +71,11 @@ export default class Login extends Component {
     }
 
     _login() {
-        if (!this.state.mail || !this.state.password) {
+        if (!this.props.email || !this.props.password) {
             return false
         }
         this._toggleLoading()
-        firebase.auth().signInWithEmailAndPassword(this.state.mail, this.state.password)
+        firebase.auth().signInWithEmailAndPassword(this.props.email, this.props.password)
         .then((user) => {
             Keyboard.dismiss()
             this._toggleLoading()
@@ -99,3 +99,10 @@ export default class Login extends Component {
         this.setState({loading: !this.state.loading})
     }
 }
+
+const mapStateProps = (state) => {
+    const { email, password } = state.auth
+    return { email, password }
+}
+
+export default connect(mapStateProps, { emailChanged, passwordChanged })(Login)
