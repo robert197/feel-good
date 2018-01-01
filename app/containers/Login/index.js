@@ -12,7 +12,7 @@ import {
 import Header from '../../components/Header'
 import firebase from 'react-native-firebase'
 import { connect } from 'react-redux'
-import { emailChanged, passwordChanged } from '../../actions/'
+import { emailChanged, passwordChanged, loginUser } from '../../actions/'
 
 class Login extends Component {
     
@@ -22,12 +22,8 @@ class Login extends Component {
 
     constructor(props, context) {
         super(props, context)
-        this._openHome = this._openHome.bind(this)
-        this._login = this._login.bind(this)
-        this._openRegistration = this._openRegistration.bind(this)
+        this.openRegistration = this.openRegistration.bind(this)
         this.state = {
-            validationMessage: '',
-            loading: false,
             fadeInAnimationValue: new Animated.Value(0)
         }
     }
@@ -60,49 +56,28 @@ class Login extends Component {
                 secureTextEntry={true}
                 />
 
-                <Button title="Login" onPress={this._login}/>
-                <Button title="Register" onPress={this._openRegistration}/>
+                <Button title="Login" onPress={this.login.bind(this)}/>
+                <Button title="Register" onPress={this.openRegistration}/>
 
-                { this.state.loading ? <ActivityIndicator size={'large'}/> : null }
+                { this.props.loading ? <ActivityIndicator size={'large'}/> : null }
 
-                <Text>{ this.state.validationMessage }</Text>
+                <Text>{ this.props.error }</Text>
             </Animated.View>
         )
     }
 
-    _login() {
-        if (!this.props.email || !this.props.password) {
-            return false
-        }
-        this._toggleLoading()
-        firebase.auth().signInWithEmailAndPassword(this.props.email, this.props.password)
-        .then((user) => {
-            Keyboard.dismiss()
-            this._toggleLoading()
-            this._openHome()
-        })
-        .catch(() => {
-            this._toggleLoading()
-            this.setState({validationMessage: 'Email or password was wrong. Please check if your data is correct or create new account.'})
-        })
+    login() {
+        this.props.loginUser(this.props.email, this.props.password)
     }
 
-    _openHome() {
-        this.props.navigation.navigate('Home')
-    }
-
-    _openRegistration() {
+    openRegistration() {
         this.props.navigation.navigate('Registration')
-    }
-
-    _toggleLoading() {
-        this.setState({loading: !this.state.loading})
     }
 }
 
 const mapStateProps = (state) => {
-    const { email, password } = state.auth
-    return { email, password }
+    const { email, password, loading, error } = state.auth
+    return { email, password, loading, error }
 }
 
-export default connect(mapStateProps, { emailChanged, passwordChanged })(Login)
+export default connect(mapStateProps, { emailChanged, passwordChanged, loginUser })(Login)

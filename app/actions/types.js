@@ -1,5 +1,8 @@
 export const EMAIL_CHANGED = 'EMAIL_CHANGED'
 export const PASSWORD_CHANGED = 'PASSWORD_CHANGED'
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
+export const LOGIN_FAIL = 'LOGIN_FAIL'
+export const LOGIN_USER = 'LOGIN_USER'
 
 export const SHOW_IMAGE = 'SHOW_IMAGE'
 export const ADD_PICTURE = 'ADD_PICTURE'
