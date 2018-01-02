@@ -144,9 +144,11 @@ export default class CameraComponent extends Component {
     _uploadImage(filePath, happiness) {
       const pathArray = filePath.split('/')
       const imageName = pathArray[pathArray.length - 1].split('.')[0] + '-!-' + this.state.happiness + '.jpg'
+      const userUid = firebase.auth().currentUser.uid
+      firebase.database().ref(userUid + '/pictures/').push(imageName)
       firebase.storage()
       .ref('images')
-      .child(`${firebase.auth().currentUser.uid}/${imageName}`)
+      .child(`${userUid}/${imageName}`)
       .putFile(filePath)
       .then(console.log)
       .catch(console.log)

@@ -14,6 +14,7 @@ import Menu from '../../components/Menu'
 import Icon from 'react-native-vector-icons/dist/Ionicons'
 import firebase from 'react-native-firebase';
 import { connect } from 'react-redux'
+import { fetchAllPictures } from '../../actions'
 
 const COLORS = {
   mainColor: '#FBC02D',
@@ -30,6 +31,10 @@ class Home extends Component {
     super(props, context)
     this._openCamera = this._openCamera.bind(this)
     this._getMenuItems = this._getMenuItems.bind(this)
+  }
+
+  componentDidMount() {
+    this.props.fetchAllPictures()
   }
 
   _openCamera() {
@@ -70,7 +75,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateProps = state => {
-  return {allPictures: state.allPictures}
+  return {pictures: state.pictures}
 }
 
-export default connect(mapStateProps)(Home)
+export default connect(mapStateProps, { fetchAllPictures })(Home)
