@@ -6,9 +6,11 @@ import ImageResizerService from '../../../Services/ImageResizer.service'
 import APIUtils from '../../../Services/EmotionAPI.service'
 import Icon from 'react-native-vector-icons/dist/Ionicons'
 import firebase from 'react-native-firebase'
-import Modal from 'react-native-modalbox';
+import Modal from 'react-native-modalbox'
+import { connect } from 'react-redux'
+import { addNewImageToAll } from '../../actions'
 
-export default class CameraComponent extends Component {
+class CameraComponent extends Component {
 
     static navigationOptions = {
       headerStyle: {
@@ -145,12 +147,16 @@ export default class CameraComponent extends Component {
       const pathArray = filePath.split('/')
       const imageName = pathArray[pathArray.length - 1].split('.')[0] + '-!-' + this.state.happiness + '.jpg'
       const userUid = firebase.auth().currentUser.uid
-      firebase.database().ref(userUid + '/pictures/').push(imageName)
+      if(this.state.happiness >= 0.5) {
+        firebase.database().ref(userUid + '/pictures/').push(imageName)
+      }
       firebase.storage()
       .ref('images')
       .child(`${userUid}/${imageName}`)
       .putFile(filePath)
-      .then(console.log)
+      .then((ref) => {
+        this.props.addNewImageToAll(ref.downloadURL)
+      })
       .catch(console.log)
     }
 }
@@ -182,3 +188,5 @@ const styles = StyleSheet.create({
       fontSize: 16
     }
   });
+
+  export default connect(null, { addNewImageToAll })(CameraComponent)

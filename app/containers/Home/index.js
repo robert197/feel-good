@@ -35,6 +35,7 @@ class Home extends Component {
 
   componentDidMount() {
     this.props.fetchAllPictures()
+    console.log(this.props.pictures)
   }
 
   _openCamera() {
@@ -58,7 +59,7 @@ class Home extends Component {
       <View style={styles.container}>
         <Menu items={this._getMenuItems()}/>
         <Header title="Smiles"/>
-        <ImagesGridComponent />
+        <ImagesGridComponent images={this.props.allImages}/>
         <FAB style={styles.fabButton} buttonColor={COLORS.mainColor} iconTextColor={COLORS.textColor} onClickAction={() => {this._openCamera()}} visible={true} iconTextComponent={<Icon name="md-add"/>} />
       </View>
     );
@@ -75,7 +76,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStateProps = state => {
-  return {pictures: state.pictures}
+  const { allImages, loading, error } = state.pictures
+  return { allImages, loading, error }
 }
 
 export default connect(mapStateProps, { fetchAllPictures })(Home)

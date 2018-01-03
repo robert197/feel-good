@@ -17,3 +17,9 @@ export const REGISTER_USER = 'REGISTER_USER'
 export const SHOW_IMAGE = 'SHOW_IMAGE'
 export const ADD_PICTURE = 'ADD_PICTURE'
 export const SHOW_IMAGES = 'SHOW_IMAGES'
+
+// fetch images
+export const FETCH_IMAGES = 'FETCH_IMAGES'
+export const FETCH_IMAGES_SUCCESS = 'FETCH_IMAGES_SUCCESS'
+export const FETCH_IMAGES_FAIL = 'FETCH_IMAGES_FAIL'
+export const ADD_IMAGE = 'ADD_IMAGE'
